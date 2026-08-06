@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61,<69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "excel-to-memo"
+version = "0.1.2"
+description = "Convert monitoring-detail Excel files into memo-style review outputs."
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = [
+  "pandas>=1.3.5,<2.0; python_version < '3.8'",
+  "pandas>=2.0; python_version >= '3.8'",
+  "openpyxl>=3.0.10",
+  "python-docx>=0.8.11",
+  "xlrd>=2.0.1",
+]
+
+[project.scripts]
+excel-to-memo = "excel_to_memo.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

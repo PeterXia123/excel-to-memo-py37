@@ -1,0 +1,12 @@
+Section,Sub-section,Model name,Model Parameter,Portfolio,Status,Materiality,Over/under estimate,ECL impact,Comments
+Chile CAT Credit Card,Backtesting,Chile CAT CC,PD,Credit Card,Fail,30.50%,underestimated,$+8.22 MM,"The PD parameter is underestimated in the current quarter with an ECL impact of $+8.22 MM."
+Chile CAT Credit Card,Backtesting,Chile CAT CC,LGD-ND,Credit Card,Fail,30.50%,overestimated,$-5.45 MM,"The LGD-ND model shows consistent overestimation across recent quarters."
+Chile CAT Credit Card,Backtesting,Chile CAT CC,LGD-D,Credit Card,Fail,13.50%,overestimated,$-1.67 MM,"The LGD-D model parameters reflect overestimation."
+Chile CAT Credit Card,Backtesting,Chile CAT CC,EAD,Credit Card,Pass,-,-,-,"The EAD parameter remains within monitoring tolerance."
+Chile BNS Portfolios,PD Backtesting,BNS Portfolios PD,PD,Mortgage,Pass,-,-,-,"The PD parameters of mortgage, revolving and term loans performed well in 2026Q1."
+Chile BNS Portfolios,PD Backtesting,BNS Portfolios PD,PD,Revolving,Pass,-,-,-,"The PD parameters of mortgage, revolving and term loans performed well in 2026Q1."
+Chile BNS Portfolios,PD Backtesting,BNS Portfolios PD,PD,Term Loans,Pass,-,-,-,"The PD parameters of mortgage, revolving and term loans performed well in 2026Q1."
+Chile BNS Portfolios,PD Backtesting,BNS Portfolios PD,EAD,Revolving Portfolio,Warning,0.65MM,overestimated,$0.65 MM,"A persistent breach is observed in EAD parameters of Revolving products (CC and LOC); EAD is overestimated with ECL impact of $XX MM."
+Peru Microfinance and Loans Portfolio,Monitoring,SBP Small Business and Personal Loans,PD,Small Business,Fail,13.10%,overestimated,CAD $-9.34 MM,"PD of SBP Small Business is in red zone."
+Peru Microfinance and Loans Portfolio,Monitoring,SBP Small Business and Personal Loans,PD,Personal Loans,Fail,27.60%,underestimated,CAD 13.03 MM,"PD of SBP Personal Loans is in red zone."
+Mexico Portfolios,Monitoring,NWO,EAD,Revolving Products,Warning,2.66MM,underestimated,$2.66 MM,"A persistent breach is observed in EAD parameters of Revolving products; EAD is underestimated with ECL impact of $2.66 MM."
