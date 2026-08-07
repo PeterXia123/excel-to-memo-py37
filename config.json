@@ -1,0 +1,18 @@
+{
+  "input": {
+    "group_by": "section"
+  },
+  "report": {
+    "title": "MEMO: Model Monitoring Report Review",
+    "applicable_models": "IFRS9 International Banking Non-FLI ECL Models",
+    "model_owner": "EST",
+    "date_report_received": "2026-Jan-29",
+    "performance_assessment_date": "2025-Dec-31",
+    "assessment_comments": "See comments below.",
+    "mva_signoff": "Jose Mas Oliva - IFRS9",
+    "requirements": [
+      "Monitoring Frequency meets minimum requirements",
+      "Nature and type of monitoring is aligned with type of model and its output characteristics"
+    ]
+  }
+}

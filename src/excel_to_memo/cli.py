@@ -38,13 +38,28 @@ def main() -> None:
     parser = build_parser()
     args = parser.parse_args()
 
-    config = load_config(args.config)
+    input_path = Path(args.input_file)
+    if not input_path.exists():
+        parser.error("Input file was not found: %s" % args.input_file)
+
+    config_arg = args.config
+    if config_arg:
+        config_path = Path(config_arg)
+        if not config_path.exists():
+            parser.error(
+                "Config file was not found: %s. Try --config config.json or "
+                "--config examples/sample_config.json" % config_arg
+            )
+    elif Path("config.json").exists():
+        config_arg = "config.json"
+
+    config = load_config(config_arg)
     if args.sheet:
         config.setdefault("input", {})
         config["input"]["sheet_name"] = args.sheet
 
     dataframe = load_dataframe(
-        input_path=args.input_file,
+        input_path=input_path,
         sheet_name=config.get("input", {}).get("sheet_name"),
     )
     report = build_report(dataframe, config)

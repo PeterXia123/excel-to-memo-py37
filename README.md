@@ -25,13 +25,44 @@ This means the Word file is treated as a layout template, not as a content sourc
 
 ## Quick start
 
-1. Install the package:
+### Recommended: run directly without installation
+
+First install the runtime dependencies only:
+
+```bash
+pip install -r requirements-py37.txt
+```
+
+From the repo root:
+
+```bash
+python run_excel_to_memo.py input.xlsx --config config.json --output-dir out
+```
+
+If your sheet already uses the expected column names, you can also omit the config:
+
+```bash
+python run_excel_to_memo.py input.xlsx --output-dir out
+```
+
+### Alternative: run the module from source
+
+```bash
+pip install -r requirements-py37.txt
+PYTHONPATH=src python -m excel_to_memo input.xlsx --config config.json --output-dir out
+```
+
+`config.json` is included at the repo root as a ready-to-run starter config.
+
+### Optional: install the package
+
+Only do this if your environment can install build dependencies.
 
 ```bash
 python -m pip install .
 ```
 
-2. Run it:
+Then run:
 
 ```bash
 excel-to-memo input.xlsx --config config.json --output-dir out
@@ -80,7 +111,15 @@ Notes for Windows:
 Without installing the package, you can run it from source:
 
 ```bash
+pip install -r requirements-py37.txt
 PYTHONPATH=src python -m excel_to_memo input.xlsx --config config.json --output-dir out
+```
+
+Or use the direct runner at the repo root:
+
+```bash
+pip install -r requirements-py37.txt
+python run_excel_to_memo.py input.xlsx --config config.json --output-dir out
 ```
 
 ## Expected input columns
@@ -115,6 +154,7 @@ See `examples/sample_config.json`.
 ## Notes
 
 - Input can be `.xlsx`, `.xls`, `.csv`, or `.tsv`
+- Direct-run mode still needs the runtime dependencies from `requirements-py37.txt`
 - If a row already has narrative text in `Comments`, that text is preferred in the generated memo
 - If comments are blank, the tool falls back to structured sentences built from status, parameter, estimate direction, and ECL impact
 - The sample workbook is only illustrative. Final section names and comment text always come from the source Excel file you run through the tool.
