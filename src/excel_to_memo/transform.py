@@ -117,7 +117,7 @@ def build_report(dataframe: pd.DataFrame, config: Dict[str, Any]) -> MemoReport:
     }
 
     intro_paragraphs: List[str] = []
-    if report_config.get("include_intro", False):
+    if report_config.get("include_intro", True):
         intro_paragraphs = [
             report_config.get(
                 "intro_template",
@@ -134,7 +134,7 @@ def build_report(dataframe: pd.DataFrame, config: Dict[str, Any]) -> MemoReport:
         ]
 
     closing_paragraphs: List[str] = []
-    if report_config.get("include_outro", report_config.get("include_intro", False)):
+    if report_config.get("include_outro", report_config.get("include_intro", True)):
         closing_paragraphs = [
             report_config.get("outro_template", DEFAULT_COMMENTS_OUTRO),
         ]

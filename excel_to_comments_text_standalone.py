@@ -128,7 +128,7 @@ def build_comments_text_from_dataframe(
 
 
 def build_intro_paragraphs(report_config: Dict[str, Any]) -> List[str]:
-    if not report_config.get("include_intro", False):
+    if not report_config.get("include_intro", True):
         return []
 
     applicable_models = report_config.get(
@@ -153,7 +153,7 @@ def build_intro_paragraphs(report_config: Dict[str, Any]) -> List[str]:
 
 
 def build_closing_paragraphs(report_config: Dict[str, Any]) -> List[str]:
-    if not report_config.get("include_outro", report_config.get("include_intro", False)):
+    if not report_config.get("include_outro", report_config.get("include_intro", True)):
         return []
     return [report_config.get("outro_template", DEFAULT_COMMENTS_OUTRO)]
 
