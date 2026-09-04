@@ -13,7 +13,7 @@ from docx.oxml.ns import qn
 from docx.shared import Pt
 from docx.shared import Inches, RGBColor
 
-from .transform import MemoReport
+from .transform import MemoReport, build_comments_text
 
 ACCENT = RGBColor(138, 69, 69)
 TEXT = RGBColor(25, 25, 25)
@@ -59,12 +59,10 @@ def render_markdown(report: MemoReport, output_path: Union[str, Path]) -> Path:
     lines.append("")
     lines.append("### Comments")
     lines.append("")
-    for paragraph in report.intro_paragraphs:
-        lines.append(paragraph)
+    comments_text = build_comments_text(report)
+    if comments_text:
+        lines.extend(comments_text.splitlines())
         lines.append("")
-    for bullet in report.bullets:
-        lines.append(f"- {bullet}")
-    lines.append("")
     path.write_text("\n".join(lines), encoding="utf-8")
     return path
 
@@ -264,6 +262,13 @@ def add_comments_box(document: Document, report: MemoReport) -> None:
         paragraph.paragraph_format.left_indent = Inches(0.28)
         paragraph.paragraph_format.first_line_indent = Inches(0)
         apply_bold_label_bullet(paragraph, bullet)
+
+    for paragraph_text in report.closing_paragraphs:
+        paragraph = body_cell.add_paragraph()
+        paragraph.paragraph_format.space_before = Pt(2)
+        paragraph.paragraph_format.space_after = Pt(6)
+        run = paragraph.add_run(paragraph_text)
+        set_run_font(run, name="Arial", size=10.5, color=TEXT)
 
     # Remove the default empty paragraph that comes with new table cells.
     if body_cell.paragraphs and not body_cell.paragraphs[0].text.strip():

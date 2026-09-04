@@ -28,6 +28,11 @@ DEFAULT_ALIASES = {
 }
 
 DEFAULT_APPLICABLE_MODELS = "IFRS9 International Banking Non-FLI ECL Models"
+DEFAULT_COMMENTS_OUTRO = (
+    "Models not mentioned above are either unmonitored or have successfully "
+    "completed the necessary tests. The table below provides specific "
+    "monitoring information for each model."
+)
 BLANK_MARKERS = {"", "-", "--", "n/a", "na", "none", "null", "nan"}
 PASS_STATUSES = {"pass", "passed", "ok", "acceptable"}
 WARNING_STATUSES = {"warning", "warn", "yellow", "watch"}
@@ -47,6 +52,7 @@ class MemoReport:
     review_summary: Dict[str, str]
     requirements: List[str]
     intro_paragraphs: List[str]
+    closing_paragraphs: List[str]
     bullets: List[str]
     normalized_rows: List[Dict[str, str]]
 
@@ -127,6 +133,12 @@ def build_report(dataframe: pd.DataFrame, config: Dict[str, Any]) -> MemoReport:
             ),
         ]
 
+    closing_paragraphs: List[str] = []
+    if report_config.get("include_outro", report_config.get("include_intro", False)):
+        closing_paragraphs = [
+            report_config.get("outro_template", DEFAULT_COMMENTS_OUTRO),
+        ]
+
     requirements = report_config.get(
         "requirements",
         [
@@ -141,6 +153,7 @@ def build_report(dataframe: pd.DataFrame, config: Dict[str, Any]) -> MemoReport:
         review_summary=review_summary,
         requirements=requirements,
         intro_paragraphs=intro_paragraphs,
+        closing_paragraphs=closing_paragraphs,
         bullets=bullets,
         normalized_rows=normalized.fillna("").to_dict(orient="records"),
     )
@@ -502,6 +515,26 @@ def first_non_blank(*values: str) -> str:
         if not is_blank_like(value):
             return value
     return ""
+
+
+def build_comments_text(report: MemoReport, bullet_prefix: str = "- ") -> str:
+    sections: List[str] = []
+
+    if report.intro_paragraphs:
+        sections.append("\n\n".join(report.intro_paragraphs))
+
+    if report.bullets:
+        sections.append(
+            "\n".join(
+                "{prefix}{bullet}".format(prefix=bullet_prefix, bullet=bullet)
+                for bullet in report.bullets
+            )
+        )
+
+    if report.closing_paragraphs:
+        sections.append("\n\n".join(report.closing_paragraphs))
+
+    return "\n\n".join(section for section in sections if section)
 
 
 def report_to_dict(report: MemoReport) -> Dict[str, Any]:
