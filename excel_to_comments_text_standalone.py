@@ -59,6 +59,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional Excel sheet name. If omitted, the first sheet is used.",
     )
     parser.add_argument(
+        "--status-filter",
+        help=(
+            "Optional status filter. Example: 'Breach' or 'Fail,Breach'. "
+            "Only matching rows are used to generate memo text."
+        ),
+    )
+    parser.add_argument(
         "--output-file",
         help="Optional text file path. If omitted, text is printed to stdout.",
     )
@@ -90,11 +97,15 @@ def build_comments_text_from_excel(
     input_path: Union[str, Path],
     config_path: Optional[Union[str, Path]] = None,
     sheet_name: Optional[str] = None,
+    status_filter: Optional[str] = None,
 ) -> str:
     config = load_config(config_path)
     if sheet_name:
         config.setdefault("input", {})
         config["input"]["sheet_name"] = sheet_name
+    if status_filter:
+        config.setdefault("filters", {})
+        config["filters"]["status_filter"] = status_filter
 
     dataframe = load_dataframe(
         input_path=input_path,
@@ -110,6 +121,7 @@ def build_comments_text_from_dataframe(
     resolved_config = config or {}
     input_config = resolved_config.get("input", {})
     report_config = resolved_config.get("report", {})
+    filter_config = resolved_config.get("filters", {})
 
     normalized = normalize_dataframe(
         dataframe=dataframe,
@@ -119,6 +131,7 @@ def build_comments_text_from_dataframe(
             "forward_fill_columns", DEFAULT_FORWARD_FILL_COLUMNS
         ),
     )
+    normalized = apply_filters(normalized, filter_config)
 
     bullets = build_section_bullets(normalized, input_config.get("group_by", "section"))
     intro_paragraphs = build_intro_paragraphs(report_config)
@@ -235,6 +248,31 @@ def normalize_dataframe(
         lambda value: first_non_blank(value, "Unlabeled Section")
     )
     return normalized
+
+
+def apply_filters(
+    normalized: pd.DataFrame,
+    filter_config: Dict[str, Any],
+) -> pd.DataFrame:
+    status_filter = filter_config.get("status_filter")
+    if is_blank_like(status_filter):
+        return normalized
+
+    requested_values = parse_filter_values(status_filter)
+    if not requested_values:
+        return normalized
+
+    requested_raw = {normalize_whitespace(item).lower() for item in requested_values}
+    requested_normalized = {normalize_status(item) for item in requested_values}
+
+    filtered = normalized.loc[
+        normalized["status_raw"].map(
+            lambda value: normalize_whitespace(value).lower() in requested_raw
+        )
+        | normalized["status"].isin(requested_normalized)
+    ].copy()
+    filtered["row_order"] = range(len(filtered))
+    return filtered
 
 
 def build_section_bullets(normalized: pd.DataFrame, group_by: str) -> List[str]:
@@ -409,6 +447,14 @@ def normalize_estimate_direction(value: str) -> str:
     return cleaned
 
 
+def parse_filter_values(value: Any) -> List[str]:
+    if isinstance(value, (list, tuple, set)):
+        raw_items = list(value)
+    else:
+        raw_items = re.split(r"[;,|]", clean_cell(value))
+    return [item for item in (clean_cell(part) for part in raw_items) if item]
+
+
 def row_is_blank(row: pd.Series) -> bool:
     return all(is_blank_like(value) for value in row.tolist())
 
@@ -469,6 +515,7 @@ def main() -> None:
         input_path=input_path,
         config_path=config_arg,
         sheet_name=args.sheet,
+        status_filter=args.status_filter,
     )
 
     if args.output_file:
