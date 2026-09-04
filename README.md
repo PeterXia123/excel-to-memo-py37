@@ -54,18 +54,12 @@ PYTHONPATH=src python -m excel_to_memo input.xlsx --config config.json --output-
 
 `config.json` is included at the repo root as a ready-to-run starter config.
 
-### Generate comments from breach rows only
+### Generate comments text
 
-If you only want memo text from rows whose `Status` is `Breach`, use:
-
-```bash
-python excel_to_comments_text_standalone.py input.xlsx --status-filter Breach --output-file comments.txt
-```
-
-You can also pass multiple status values:
+`excel_to_comments_text_standalone.py` now always filters to rows whose `Status` is `Breach`, then builds the memo text from those rows.
 
 ```bash
-python excel_to_comments_text_standalone.py input.xlsx --status-filter "Breach,Fail" --output-file comments.txt
+python excel_to_comments_text_standalone.py input.xlsx --output-file comments.txt
 ```
 
 ### Optional: install the package
